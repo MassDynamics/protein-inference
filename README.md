@@ -17,14 +17,16 @@ REPRISAL stands for "REcursive PRotein Inference Scoring ALgorithm" and works by
 ## Installation 
 
 ```
-python setup.py install
+pip install protein-inference
 ```
 
 ## Development Set up
 
+```
 conda create --name protein_inference
 conda activate protein_inference
 conda install --file requirements.txt
+```
 
 ## Dependencies
 
