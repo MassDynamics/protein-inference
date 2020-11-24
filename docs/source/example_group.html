@@ -1,0 +1,108 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 600px;
+            height: 400px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"allocated": "HPRR1320009", "color": "#00B5D7", "id": "CLGATAQQFHR", "label": "CLGATAQQFHR", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": true}, {"color": "#00B5D7", "id": "HPRR1320009", "label": "HPRR1320009", "major": "HPRR1320009", "protein": 1, "score": 7.08120312, "shape": "dot", "size": 10, "title": "Protein Score: 7.08", "unique_evidence": true}, {"color": "#00B5D7", "id": "HPRR4320595", "label": "HPRR4320595", "major": "HPRR1320009", "protein": 1, "score": 0, "shape": "dot", "size": 10, "title": "Protein Score: 0", "unique_evidence": false}, {"allocated": "HPRR1320009", "color": "#00B5D7", "id": "EANQSTLENFLER", "label": "EANQSTLENFLER", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": false}, {"allocated": "HPRR1320009", "color": "#00B5D7", "id": "LDRNLWGLAGLNSCPVK", "label": "LDRNLWGLAGLNSCPVK", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": false}, {"allocated": "HPRR1320009", "color": "#00B5D7", "id": "LDRNLWGLAGLNSCPVKEANQSTLENFLER", "label": "LDRNLWGLAGLNSCPVKEANQSTLENFLER", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": false}, {"allocated": "HPRR1320009", "color": "#00B5D7", "id": "NLWGLAGLNSCPVK", "label": "NLWGLAGLNSCPVK", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": false}, {"allocated": "HPRR1320009", "color": "#00B5D7", "id": "NLWGLAGLNSCPVKEANQSTLENFLER", "label": "NLWGLAGLNSCPVKEANQSTLENFLER", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": false}, {"allocated": "HPRR1320009", "color": "#00B5D7", "id": "QFYSHHEKDTR", "label": "QFYSHHEKDTR", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": true}, {"allocated": "HPRR1320009", "color": "#00B5D7", "id": "Q[-17.0265]FYSHHEKDTR", "label": "Q[-17.0265]FYSHHEKDTR", "protein": 0, "razor": true, "shape": "dot", "size": 5, "unique": true}]);
+        edges = new vis.DataSet([{"PEP": 2.0414972e-05, "color": "#00B5D7", "from": "CLGATAQQFHR", "q_value": 0.00017850768, "score": 1.26708498, "title": "PSM Score: 1.27", "to": "HPRR1320009", "weight": 1}, {"PEP": 0.0015784642000000002, "color": "#00B5D7", "from": "HPRR4320595", "q_value": 0.00017850768, "score": 0.72224036, "title": "PSM Score: 0.72", "to": "EANQSTLENFLER", "weight": 1}, {"PEP": 0.00099222758, "color": "#00B5D7", "from": "HPRR4320595", "q_value": 0.00017850768, "score": 0.78043725, "title": "PSM Score: 0.78", "to": "LDRNLWGLAGLNSCPVK", "weight": 1}, {"PEP": 0.024374745, "color": "#00B5D7", "from": "HPRR4320595", "q_value": 0.00017850768, "score": 0.37775058, "title": "PSM Score: 0.38", "to": "LDRNLWGLAGLNSCPVKEANQSTLENFLER", "weight": 1}, {"PEP": 0.000327358, "color": "#00B5D7", "from": "HPRR4320595", "q_value": 0.00017850768, "score": 0.91940496, "title": "PSM Score: 0.92", "to": "NLWGLAGLNSCPVK", "weight": 1}, {"PEP": 8.3482605e-10, "color": "#00B5D7", "from": "HPRR4320595", "q_value": 0.00017850768, "score": 2.53315397, "title": "PSM Score: 2.53", "to": "NLWGLAGLNSCPVKEANQSTLENFLER", "weight": 1}, {"PEP": 0.0015784642000000002, "color": "#00B5D7", "from": "EANQSTLENFLER", "q_value": 0.00017850768, "score": 0.72224036, "title": "PSM Score: 0.72", "to": "HPRR1320009", "weight": 1}, {"PEP": 8.3482605e-10, "color": "#00B5D7", "from": "NLWGLAGLNSCPVKEANQSTLENFLER", "q_value": 0.00017850768, "score": 2.53315397, "title": "PSM Score: 2.53", "to": "HPRR1320009", "weight": 1}, {"PEP": 0.00099222758, "color": "#00B5D7", "from": "LDRNLWGLAGLNSCPVK", "q_value": 0.00017850768, "score": 0.78043725, "title": "PSM Score: 0.78", "to": "HPRR1320009", "weight": 1}, {"PEP": 0.024374745, "color": "#00B5D7", "from": "HPRR1320009", "q_value": 0.00017850768, "score": 0.37775058, "title": "PSM Score: 0.38", "to": "LDRNLWGLAGLNSCPVKEANQSTLENFLER", "weight": 1}, {"PEP": 0.000327358, "color": "#00B5D7", "from": "HPRR1320009", "q_value": 0.00017850768, "score": 0.91940496, "title": "PSM Score: 0.92", "to": "NLWGLAGLNSCPVK", "weight": 1}, {"PEP": 0.34430414, "color": "#00B5D7", "from": "HPRR1320009", "q_value": 0.007658643299999999, "score": 0.01533595, "title": "PSM Score: 0.02", "to": "QFYSHHEKDTR", "weight": 1}, {"PEP": 0.012157011, "color": "#00B5D7", "from": "HPRR1320009", "q_value": 0.00017850768, "score": 0.46579507, "title": "PSM Score: 0.47", "to": "Q[-17.0265]FYSHHEKDTR", "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
