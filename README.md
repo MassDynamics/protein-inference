@@ -19,14 +19,16 @@ Protein inference and related algorithms can appear quite complicated at first b
 ## Installation 
 
 ```
-python setup.py install
+pip install protein-inference
 ```
 
 ## Development Set up
 
+```
 conda create --name protein_inference
 conda activate protein_inference
 conda install --file requirements.txt
+```
 
 ## Dependencies
 
