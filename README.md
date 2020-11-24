@@ -14,8 +14,6 @@ The REPRISAL algorithm, currently unpublished, was the first novel algorithm imp
 
 REPRISAL stands for "REcursive PRotein Inference Scoring ALgorithm" and works by iteratively scoring proteins by their associated peptides and grouping all associated and unallocated peptides with the highest scoring protein at each iteration. FDR's are then calculated as per the score distributions for proteins in the target and decoy tables. 
 
-Protein inference and related algorithms can appear quite complicated at first but once the following concepts are understood, turn out quite simple. 
-
 ## Installation 
 
 ```
