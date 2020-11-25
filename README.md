@@ -59,7 +59,7 @@ pi.ProteinInferenceRunner().run(target_path,
 You can also run the package via the commandline if you can specify the path to the python directory where you have protein_inference installed. 
 
 ```bash
-python -m <virtualenv_name>/lib/<python_ver>/site-packages/protein_inference.main \
+python -m protein_inference.main \
   --output-directory path/to/out/folder \
   --target-path path/to/your/target.psms.txt \
   --decoy-path path/to/your/decoy.psms.txt
