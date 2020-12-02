@@ -137,7 +137,9 @@ class TableMaker():
         df = df.groupby("sequence_modified").aggregate(agg_dict).reset_index()
 
         df = df.rename(columns = {"q_value":"q-value","sequence_modified":"sequence", "protein_id":"all_proteins"})
-        cols = ['sequence', 'unique','razor', 'unique_evidence', 'PEP', 'q-value', 'score', 'major','protein_score',"all_proteins"]
+
+        #note that the q-value gets overwritten by FDR calculator in runner
+        cols = ['sequence', 'unique','razor', 'unique_evidence', 'q-value', 'score', 'major','protein_score',"all_proteins"]
 
         new_cols = []
         for col in cols:

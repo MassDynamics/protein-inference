@@ -90,6 +90,8 @@ class ProteinInferenceRunner():
         print("Estimating False Discovery Rates...")
         target_fdr_table = FalseDiscoveryRateCalculator().tag_q_value(target_protein_table[target_protein_table.score > 0],
                                                                       decoy_protein_table[decoy_protein_table.score > 0])
+        target_peptide_table = FalseDiscoveryRateCalculator().tag_q_value(target_peptide_table, 
+                                                                            decoy_peptide_table).drop("FDR", axis = 1)
 
         target_fdr_table = target_fdr_table.sort_values(
             ["q-value", "ProteinId"], ascending=[True, True])
