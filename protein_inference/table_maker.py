@@ -123,8 +123,7 @@ class TableMaker():
         def label_score(protein, score_dict):
             return score_dict[protein]
 
-        protein_table = self.get_protein_table(pn)
-        score_dict = dict(zip(protein_table.protein_id, protein_table.score))
+        score_dict = pn.get_node_attribute_dict("score")
 
         df = self._get_edge_list(pn)
         df["protein_score"] = df.apply(lambda row: label_score(row["protein_id"],
