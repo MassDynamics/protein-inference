@@ -125,24 +125,25 @@ class TableMaker():
 
         score_dict = pn.get_node_attribute_dict("score")
 
-        df = self._get_edge_list(pn)
+        df = TableMaker()._get_edge_list(pn)
         df["protein_score"] = df.apply(lambda row: label_score(row["protein_id"],
                                                     score_dict), axis=1)
 
         df = df.sort_values(["sequence_modified", "protein_score"],
                             ascending=[True, False])
 
-        # remove duplicate proteins
-        df = df.groupby("sequence_modified").first().reset_index()
-        
-        df = df.rename(columns = {"q_value":"q-value","sequence_modified":"sequence"})
-        cols = ['sequence', 'unique','razor', 'PEP', 'q-value', 'score', 'major','protein_score', 'unique_evidence']
+        # collapse rows to peptide result
+        agg_dict = {"unique":min,"razor":min,"unique_evidence":max,"major":min, "score":min, "PEP":min,"q_value":min,"protein_score":max, "protein_id":list}
+        df = df.groupby("sequence_modified").aggregate(agg_dict).reset_index()
+
+        df = df.rename(columns = {"q_value":"q-value","sequence_modified":"sequence", "protein_id":"all_proteins"})
+        cols = ['sequence', 'unique','razor', 'unique_evidence', 'PEP', 'q-value', 'score', 'major','protein_score',"all_proteins"]
 
         new_cols = []
         for col in cols:
             if col in df.columns:
                 new_cols.append(col)
-        
+
         df = df.loc[:,new_cols]
         return df
 
