@@ -23,9 +23,7 @@ pip install protein-inference
 ## Development Set up
 
 ```
-conda create --name protein_inference
-conda activate protein_inference
-conda install --file requirements.txt
+conda create -y --name protein-inference python=3.8 --file requirements.txt
 ```
 
 ## Dependencies
@@ -79,6 +77,27 @@ streamlit run pi_playground
 You should see this at the top of the page.
 
 ![](./readme_image.png)
+
+## Using Docker:
+
+A docker file has been created which creates an environment to run the protein_inference
+package via a command line interface. 
+
+You can build the image from the docker file as so: 
+
+```bash
+docker build --pull --rm -f "Dockerfile" -t proteininference:latest "." 
+```
+
+Then you can run the main file from the command line by using a /data volume and passing arguments with paths to files in that folder.
+
+```bash
+docker run -it --rm -v /data:/data \
+    proteininference conda run -n protein-inference -c python -m protein_inference.main 
+    --output-directory /data/output \
+    --target-path /data/input/percolator.target.psms.txt \
+    --decoy-path /data/input/percolator.decoy.psms.txt
+```
 
 ## Future Plans: 
 
