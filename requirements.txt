@@ -7,3 +7,4 @@ seaborn==0.11.0
 upsetplot==0.4.1
 plotly_express==0.4.1
 plotly==4.10.0
+coverage==6.1.2
