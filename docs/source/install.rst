@@ -2,9 +2,22 @@
 Installation
 ============
 
+
 ----------------
 Install with pip
 ----------------
+
+The protein inference package is available on the python index via pip
+
+
+.. code-block:: bash
+
+    $ pip install protein-inference
+
+
+-------------------
+Install from github
+-------------------
 
 Currently the code can be installed from source (inside protein-inference-joseph cloned repo)
 

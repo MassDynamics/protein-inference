@@ -1,7 +1,7 @@
 
-============
-Tutorial
-============
+===========================
+Protein Inference in Python
+===========================
 
 The protein_inference library is meant to facilitate scientific thinking
 around protein inference including algorithms that perform protein grouping, 
@@ -85,11 +85,11 @@ Here I used the default status visualization:
     NetworkGrapher().draw(large_target_networks[0], by="status", 
                     name="example_status", size = [400,600])
     
-.. raw:: html
-	:file: example_status.html
+.. image:: example_status.png
+  :width: 400
+  :alt: (An interactive graphic usually, static in this document.)
 
-
-Using the package to implement a Protein Inference Strategy:
+Using the package to implement a Protein Inference Strategy: 
 ------------------------------------------------------------
 
 If you are developing or would like to try implementation of a protein inference algorithm, 
@@ -127,9 +127,9 @@ To run the unit tests from the root directory.
 
 Bash
 
->>> ./scripts/acceptance.sh
+>>> ./scripts/build.sh
 
-In order to maintain the ongoing integrity and extemsibility of the code, it is an expectation of contributors that
+In order to maintain the ongoing integrity and extensibility of the code, it is an expectation of contributors that
 merge request code can pass all of the previous build tests and new functionality be protected with new build tests.
 
 To write build tests simply follow the patterns from existing code. 

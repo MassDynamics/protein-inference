@@ -6,9 +6,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
-   install
    introduction
-   tutorial
+   install
+   preparing_input_data
+   protein_inference_in_python
    license
    documentation
    to_do_list
