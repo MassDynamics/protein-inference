@@ -57,7 +57,7 @@ class PSMsPreprocessor:
         self.partial = partial
         self.decoy = decoy
 
-    def get_processed_psms(self):
+    def get_processed_psms(self, q_value_threshold):
 
         df = self.df.copy(deep=True)
         if self.partial != 0:
@@ -65,7 +65,7 @@ class PSMsPreprocessor:
             df = df.sort_values("percolator score",
                                 ascending=True).head(self.partial)  
         df = self._preprocess_column_names(df)                
-        df = self._preprocess_q_value(df)
+        df = self._preprocess_q_value(df, q_value_threshold)
         df = self._preprocess_columns(df)
         df = self._preprocess_duplicates(df)
         if not self.decoy:
@@ -76,8 +76,8 @@ class PSMsPreprocessor:
 
         return ProcessedPSMs(df)
 
-    def _preprocess_q_value(self, df):
-        return df[df["q_value"] <= 0.01]
+    def _preprocess_q_value(self, df, q_value_threshold):
+        return df[df["q_value"] <= q_value_threshold]
 
     def _preprocess_columns(self, df):
         agg_dict = {"score": "max",

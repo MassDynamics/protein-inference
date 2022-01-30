@@ -31,7 +31,9 @@ class ProteinInferenceRunner():
     >>> runner = ProteinInferenceRunner()
     """
 
-    def run(self, target_path, decoy_path, output_directory, scoring_method=GreedyAlgorithm):
+    def run(self, target_path, decoy_path, 
+            output_directory, scoring_method=GreedyAlgorithm,
+            psms_q_value_threshold=0.01):
         """
         This method calls the protein inference workflow.
 
@@ -69,11 +71,13 @@ class ProteinInferenceRunner():
 
         print("Scoring Decoys...")
         decoy_output = self.get_output(
-            decoy_psms, decoy=1, scoring_method=scoring_method)
+            decoy_psms, decoy=1, scoring_method=scoring_method,
+            psms_q_value_threshold=psms_q_value_threshold)
 
         print("Scoring Targets...")
         target_output = self.get_output(
-            target_psms, scoring_method=scoring_method)
+            target_psms, scoring_method=scoring_method, 
+            psms_q_value_threshold=psms_q_value_threshold)
 
         del(target_psms)
         del(decoy_psms)
@@ -108,7 +112,7 @@ class ProteinInferenceRunner():
         pickle.dump(target_networks, open(os.path.join(
             output_directory, "target_networks.p"), "wb"))
 
-    def get_output(self, psms, decoy=0, scoring_method=GreedyAlgorithm):
+    def get_output(self, psms, decoy=0, scoring_method=GreedyAlgorithm, psms_q_value_threshold=0.01):
         """
         Processes either target or decoy data. 
         
@@ -136,7 +140,7 @@ class ProteinInferenceRunner():
             labels. 
 
         """
-        psms = PSMsPreprocessor(psms, decoy=decoy).get_processed_psms()
+        psms = PSMsPreprocessor(psms, decoy=decoy).get_processed_psms(psms_q_value_threshold)
         network = PSMsNetworkGenerator(psms).generate_network()
         del(psms)
 

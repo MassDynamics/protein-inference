@@ -19,8 +19,14 @@ if __name__ == "__main__":
                         dest='decoy_path',
                         help='path to decoy file',
                         required=True)
+    parser.add_argument("--psm-q-value-threshold",
+                    dest='psms_q_value_threshold',
+                    help='filtering_applied_to_input_psms',
+                    default=0.01,
+                    required=False)
 
     args = parser.parse_args()
 
     ProteinInferenceRunner().run(args.target_path, args.decoy_path,
-                                 args.output_directory)
+                                 args.output_directory,
+                                 psms_q_value_threshold = float(args.psms_q_value_threshold))
