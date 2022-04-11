@@ -20,6 +20,12 @@ REPRISAL stands for "REcursive PRotein Inference Scoring ALgorithm" and works by
 pip install protein-inference
 ```
 
+## Build Docs
+
+```
+sphinx-build -b html docs/source/ docs/build
+```
+
 ## Development Set up
 
 ```
