@@ -2,6 +2,7 @@ from pyvis.network import Network
 from copy import deepcopy
 import matplotlib.pyplot as plt 
 from matplotlib.colors import to_hex
+import seaborn as sns
 
 class NetworkGrapher():
     '''
@@ -88,19 +89,10 @@ class NetworkGrapher():
         """
         groups = list(set(pn.get_node_attribute_dict("allocated").values()))
         #colour_dict = get_colour_dict(groups)
-        colormap = [
-            "#a6cee3",
-            "#1f78b4",
-            "#b2df8a",
-            "#33a02c",
-            "#fb9a99",
-            "#e31a1c",
-            "#fdbf6f",
-            "#ff7f00",
-            "#cab2d6",
-            "#6a3d9a",
-            "#ffff99",
-            "#b15928"]
+        sample_colors = ["windows blue", "amber", "greyish", 
+                         "faded green",  "dusty purple", "pale red", 
+                         "medium green", "denim blue"]
+        colormap = list(sns.xkcd_palette(sample_colors).as_hex())
         colormap = colormap[:len(groups)]
         colour_dict = dict(zip(groups, colormap))
         for group in groups:
