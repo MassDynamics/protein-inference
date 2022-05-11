@@ -242,8 +242,6 @@ if navigation == "Quality Control":
 
             min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
             fig.add_vline(x=np.log(min_tda_score), line_dash="dashdot", annotation={"text": "TDA Inference threshold ({})".format(round(min_tda_score,3))})
-            fig.write_image("tda_density_iPRG2016.png", scale = 3)
-
             st.plotly_chart(fig, use_container_width=True)
 
     with col2:
