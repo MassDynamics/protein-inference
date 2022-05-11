@@ -12,6 +12,8 @@ import os
 from pandas import read_csv
 import plotly.figure_factory as ff
 import plotly.express as px
+from io import BytesIO
+
 sys.path.insert(1,"..")
 sys.path.insert(1,"../protein_inference")
 
@@ -22,11 +24,10 @@ from protein_inference.network_grapher import NetworkGrapher
 def parse_args(args):
     parser = argparse.ArgumentParser('Data Diagnostics')
     parser.add_argument('-f', '--folder', dest = "pi_folder", 
-            help='Folder containing protein inference output', required=True)
+            help='Folder containing protein inference output', required=False)
     return parser.parse_args(args)
 
 args = parse_args(sys.argv[1:])
-print(args.pi_folder)
 
 # app
 st.set_page_config(layout="wide")
@@ -79,12 +80,55 @@ def load_protein_inference_data(path):
 #    st.info("No protein inference output folder has been defined.")
 #    st.info("You can define it by calling: streamlit run pi_playground.py -- --folder /path/to/your/pi/output/")
 
-target_protein_table, target_peptide_table, \
-        decoy_protein_table, decoy_peptide_table, \
-        target_networks = load_protein_inference_data(args.pi_folder)
-min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+if args.pi_folder is not None:
+    target_protein_table, target_peptide_table, \
+            decoy_protein_table, decoy_peptide_table, \
+            target_networks = load_protein_inference_data(args.pi_folder)
+    min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+    navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
+else: 
+    navigation = "experiment_upload"
 
-navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
+
+
+if navigation == "experiment_upload":
+    all_files_uploaded = False
+    needed_files = {"reprisal.target.proteins.csv", "reprisal.target.peptides.csv", "reprisal.decoy.proteins.csv", "reprisal.decoy.peptides.csv", "target_networks.p"}
+
+    st.write("Please upload all the files.")
+    uploaded_files = st.file_uploader("Please upload the protein and peptide, target and decoy tables here:", accept_multiple_files=True, key = 102)
+    for uploaded_file in uploaded_files:     
+        
+        if uploaded_file.name == "reprisal.target.proteins.csv":
+            uploaded_table = pd.read_csv(uploaded_file)
+            target_protein_table = uploaded_table.drop(["ProteinGroupId", "FDR"], axis = 1)
+            needed_files = needed_files - {"reprisal.target.proteins.csv"}
+        elif uploaded_file.name == "reprisal.target.peptides.csv":
+            uploaded_table = pd.read_csv(uploaded_file)
+            target_peptide_table = uploaded_table
+            needed_files = needed_files - {"reprisal.target.peptides.csv"}
+        elif uploaded_file.name == "reprisal.decoy.proteins.csv":
+            uploaded_table = pd.read_csv(uploaded_file)
+            decoy_protein_table = uploaded_table
+            needed_files = needed_files - {"reprisal.decoy.proteins.csv"}
+        elif uploaded_file.name =="reprisal.decoy.peptides.csv":
+            uploaded_table = pd.read_csv(uploaded_file)
+            decoy_peptide_table = uploaded_table
+            needed_files = needed_files - {"reprisal.decoy.peptides.csv"}
+        elif uploaded_file.name == "target_networks.p":
+            with open("target_networks.p", "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            target_networks = pickle.load(open("target_networks.p", "rb"))
+            needed_files = needed_files - {"target_networks.p"}
+    
+    if len(needed_files) == 0:
+        all_files_uploaded = True
+        st.write("All files uploaded!")
+
+        min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+
+        st.write("You can now navigate to the other pages.")
+        navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
 
 if navigation == "Experiment Summary":
     if (1): # PLACEHOLDER FOR HAVING FINISHED PROCESSING
@@ -197,7 +241,7 @@ if navigation == "Quality Control":
             )
 
             min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
-            fig.add_vline(x=np.log(min_tda_score), line_dash="dashdot", annotation={"text": "TDA Inference threshold (log(0.199))"})
+            fig.add_vline(x=np.log(min_tda_score), line_dash="dashdot", annotation={"text": "TDA Inference threshold ({})".format(round(min_tda_score,3))})
             fig.write_image("tda_density_iPRG2016.png", scale = 3)
 
             st.plotly_chart(fig, use_container_width=True)
@@ -221,5 +265,5 @@ if navigation == "Quality Control":
 
         fig = px.ecdf(tmp.sort_values("total_peptides"), x="score", color = "total_peptides", template = "plotly_dark", 
             labels={"total_peptides": "Number of Peptides Total", "score":"log(score)"}, color_discrete_map={"5+": "red", "1": "blue", "2": "green", "3": "orange", "4": "purple", "5": "black"})
-        fig.add_vline(x=np.log(min_tda_score), line_dash="dashdot", annotation={"text": "TDA Inference threshold (0.199)"})
+        fig.add_vline(x=np.log(min_tda_score), line_dash="dashdot", annotation={"text": "TDA Inference threshold ({})".format(round(min_tda_score,3))})
         st.plotly_chart(fig, use_container_width=True)
