@@ -9,13 +9,7 @@ from PIL import Image
 # imports for PI
 import sys
 import os
-from pandas import read_csv
-import plotly.figure_factory as ff
 import plotly.express as px
-from io import BytesIO
-
-sys.path.insert(1,"..")
-sys.path.insert(1,"../protein_inference")
 
 from protein_inference.table_maker import TableMaker
 from protein_inference.network_grapher import NetworkGrapher
@@ -33,7 +27,7 @@ args = parse_args(sys.argv[1:])
 st.set_page_config(layout="wide")
 
 with st.sidebar:
-    background = Image.open("protein_inference_logo_v2.png")
+    background = Image.open("resources/protein_inference_logo_v2.png")
     st.image(background, use_column_width=True)
     st.title("Protein Inference PlayGround")
     st.subheader("Joseph Bloom - Mass Dynamics 2021")
@@ -63,7 +57,7 @@ with st.sidebar:
 
     '''
 
-    st.image("new_md_logo.png")
+    st.image("resources/new_md_logo.png")
 # import libraries
 import streamlit as st
 
