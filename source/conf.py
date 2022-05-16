@@ -12,6 +12,9 @@
 #
 import os
 import sys
+from os.path import abspath, dirname
+
+sys.path.insert(0, abspath(dirname(dirname(dirname(__file__)))))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../protein_inference'))
 # -- Project information -----------------------------------------------------
