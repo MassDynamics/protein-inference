@@ -154,17 +154,17 @@ if navigation == "Network Visualization":
         Protein Inference algorithms can be interpreted using network diagrams. 
     
         Please note the following:
-            - Large nodes are proteins. Small nodes are peptides (or PSMs).
-            - Edges are drawn when a protein contains a peptides (may have emitted it).
-            - Coloring options include by annotation, 
+
+            * Large nodes are proteins. Small nodes are peptides (or PSMs).
+            * Edges are drawn when a protein contains a peptides (may have emitted it).
+            * Coloring options include by annotation, 
         
         In the default visualization mode, proteins and peptides are coloured by status (annotation), group, or score.
 
         For more info please see the current github repository or reach out to the authors. 
     
         '''
-        molecule = st.text_input("Which molecule do you want to visualize? (copy and paste protein id's from the protein table above)", 
-                                    target_protein_table.sort_values("non_unique").ProteinId.to_list()[-1])
+        molecule = st.selectbox("Which molecule do you want to visualize? [please choose a major protein]", list(target_protein_table.ProteinId.unique()))
         pn = TableMaker().find_molecule(target_networks, molecule) 
 
         group_option = st.selectbox("Select a color schema for the force-directed problem network visualization. Selecting 'all' will create all options below.", ["all", "status", "group", "score"])
