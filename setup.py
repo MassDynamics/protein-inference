@@ -21,4 +21,4 @@ setup(name='protein_inference',
           "upsetplot>=0.4.1",
           "seaborn>=0.11.0",
           "plotly_express>=0.4.1",
-          "plotly>=4.12.0"])
+          "plotly>=5.7.0"])
