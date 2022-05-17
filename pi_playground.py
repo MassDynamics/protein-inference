@@ -1,10 +1,11 @@
+from turtle import hideturtle
 import streamlit as st
 
 import numpy as np
 import pandas as pd
 import pickle
 import argparse
-from PIL import Image 
+from PIL import Image
 
 # imports for PI
 import sys
@@ -16,10 +17,16 @@ from protein_inference.network_grapher import NetworkGrapher
 
 # pass some args
 def parse_args(args):
-    parser = argparse.ArgumentParser('Data Diagnostics')
-    parser.add_argument('-f', '--folder', dest = "pi_folder", 
-            help='Folder containing protein inference output', required=False)
+    parser = argparse.ArgumentParser("Data Diagnostics")
+    parser.add_argument(
+        "-f",
+        "--folder",
+        dest="pi_folder",
+        help="Folder containing protein inference output",
+        required=False,
+    )
     return parser.parse_args(args)
+
 
 args = parse_args(sys.argv[1:])
 
@@ -32,7 +39,7 @@ with st.sidebar:
     st.title("Protein Inference PlayGround")
     st.subheader("Joseph Bloom - Mass Dynamics 2021")
 
-    '''
+    """
     Welcome to Protein Inference Playground!
     
     This tool is designed to help you explore protein inference results produced with the PI python package. 
@@ -42,9 +49,9 @@ with st.sidebar:
     - Experiment Summary (This page has your protein inference results) and some summary statistics. 
     - Quality Control (This page has some diagnostic graphs which may help you understand your results.)
     - Network Visualization (This page provides force-directed network graphics to visualize results.)
-    '''
+    """
 
-    '''
+    """
     ---
 
 
@@ -55,21 +62,39 @@ with st.sidebar:
     Want to give us feedback? Reach out to Mass Dynamics here [here](https://www.massdynamics.com/get-in-touch) or to the authors directly at [here](joseph@massdynamics.com)
 
 
-    '''
+    """
 
     st.image("resources/new_md_logo.png")
 # import libraries
 import streamlit as st
 
+
 @st.cache(allow_output_mutation=True)
 def load_protein_inference_data(path):
-    with st.spinner(text = "Loading Protein Inference Results"):
-        target_protein_table = pd.read_csv(os.path.join(path,"reprisal.target.proteins.csv")).drop(["ProteinGroupId", "FDR"], axis = 1)
-        target_peptide_table = pd.read_csv(os.path.join(path,"reprisal.target.peptides.csv"))
-        decoy_protein_table = pd.read_csv(os.path.join(path,"reprisal.decoy.proteins.csv"))
-        decoy_peptide_table = pd.read_csv(os.path.join(path,"reprisal.decoy.peptides.csv"))
-        target_networks = pickle.load(open(os.path.join(path,"target_networks.p"), "rb"))
-    return target_protein_table, target_peptide_table, decoy_protein_table, decoy_peptide_table, target_networks
+    with st.spinner(text="Loading Protein Inference Results"):
+        target_protein_table = pd.read_csv(
+            os.path.join(path, "reprisal.target.proteins.csv")
+        ).drop(["ProteinGroupId", "FDR"], axis=1)
+        target_peptide_table = pd.read_csv(
+            os.path.join(path, "reprisal.target.peptides.csv")
+        )
+        decoy_protein_table = pd.read_csv(
+            os.path.join(path, "reprisal.decoy.proteins.csv")
+        )
+        decoy_peptide_table = pd.read_csv(
+            os.path.join(path, "reprisal.decoy.peptides.csv")
+        )
+        target_networks = pickle.load(
+            open(os.path.join(path, "target_networks.p"), "rb")
+        )
+    return (
+        target_protein_table,
+        target_peptide_table,
+        decoy_protein_table,
+        decoy_peptide_table,
+        target_networks,
+    )
+
 
 #    st.info("No protein inference output folder has been defined.")
 #    st.info("You can define it by calling: streamlit run pi_playground.py -- --folder /path/to/your/pi/output/")
@@ -78,13 +103,23 @@ data_is_available = False
 if args.pi_folder:
     data_is_available = True
 
-if data_is_available: # this will get triggered if the app is run with data, data is uploaded or sample data is clicked.
-    target_protein_table, target_peptide_table, \
-            decoy_protein_table, decoy_peptide_table, \
-            target_networks = load_protein_inference_data(args.pi_folder)
-    min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
-    navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
-else: 
+if (
+    data_is_available
+):  # this will get triggered if the app is run with data, data is uploaded or sample data is clicked.
+    (
+        target_protein_table,
+        target_peptide_table,
+        decoy_protein_table,
+        decoy_peptide_table,
+        target_networks,
+    ) = load_protein_inference_data(args.pi_folder)
+    min_tda_score = target_protein_table[
+        target_protein_table["q-value"] < 0.01
+    ].score.min()
+    navigation = st.radio(
+        "Page Selection", ["Experiment Summary", "Network Visualization"], index=1,
+    )
+else:
     navigation = "landing"
 
 if navigation == "landing":
@@ -93,17 +128,29 @@ if navigation == "landing":
     data_selection = st.radio("Data Selection", ["Upload Data", "Sample Data"])
 
     if data_selection == "Upload Data":
-            
+
         all_files_uploaded = False
-        needed_files = {"reprisal.target.proteins.csv", "reprisal.target.peptides.csv", "reprisal.decoy.proteins.csv", "reprisal.decoy.peptides.csv", "target_networks.p"}
+        needed_files = {
+            "reprisal.target.proteins.csv",
+            "reprisal.target.peptides.csv",
+            "reprisal.decoy.proteins.csv",
+            "reprisal.decoy.peptides.csv",
+            "target_networks.p",
+        }
 
         st.write("Please upload all the files.")
-        uploaded_files = st.file_uploader("Please upload the protein and peptide, target and decoy tables here:", accept_multiple_files=True, key = 102)
-        for uploaded_file in uploaded_files:     
-            
+        uploaded_files = st.file_uploader(
+            "Please upload the protein and peptide, target and decoy tables here:",
+            accept_multiple_files=True,
+            key=102,
+        )
+        for uploaded_file in uploaded_files:
+
             if uploaded_file.name == "reprisal.target.proteins.csv":
                 uploaded_table = pd.read_csv(uploaded_file)
-                target_protein_table = uploaded_table.drop(["ProteinGroupId", "FDR"], axis = 1)
+                target_protein_table = uploaded_table.drop(
+                    ["ProteinGroupId", "FDR"], axis=1
+                )
                 needed_files = needed_files - {"reprisal.target.proteins.csv"}
             elif uploaded_file.name == "reprisal.target.peptides.csv":
                 uploaded_table = pd.read_csv(uploaded_file)
@@ -113,7 +160,7 @@ if navigation == "landing":
                 uploaded_table = pd.read_csv(uploaded_file)
                 decoy_protein_table = uploaded_table
                 needed_files = needed_files - {"reprisal.decoy.proteins.csv"}
-            elif uploaded_file.name =="reprisal.decoy.peptides.csv":
+            elif uploaded_file.name == "reprisal.decoy.peptides.csv":
                 uploaded_table = pd.read_csv(uploaded_file)
                 decoy_peptide_table = uploaded_table
                 needed_files = needed_files - {"reprisal.decoy.peptides.csv"}
@@ -122,102 +169,373 @@ if navigation == "landing":
                     f.write(uploaded_file.getbuffer())
                 target_networks = pickle.load(open("target_networks.p", "rb"))
                 needed_files = needed_files - {"target_networks.p"}
-        
+
         if len(needed_files) == 0:
             all_files_uploaded = True
             st.write("All files uploaded!")
             data_is_available = True
 
-            min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+            min_tda_score = target_protein_table[
+                target_protein_table["q-value"] < 0.01
+            ].score.min()
 
             st.write("You can now navigate to the other pages.")
-            navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 0)
-    
+            navigation = st.radio(
+                "Page Selection",
+                ["Experiment Summary", "Network Visualization"],
+                index=0,
+            )
+
     elif data_selection == "Sample Data":
-        st.markdown("This data comes from the iPRG2016 benchmark, designed to test protein inference algorithm performance (https://dx.doi.org/10.7171%2Fjbt.18-2902-003).",unsafe_allow_html=True)
+        st.markdown(
+            "This data comes from the iPRG2016 benchmark, designed to test protein inference algorithm performance (https://dx.doi.org/10.7171%2Fjbt.18-2902-003).",
+            unsafe_allow_html=True,
+        )
 
         if st.checkbox("Proceed with sample data."):
-            target_protein_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.target.proteins.csv").drop(["ProteinGroupId", "FDR"], axis = 1)
-            target_peptide_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.target.peptides.csv")
-            decoy_protein_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.decoy.proteins.csv")
-            decoy_peptide_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.decoy.peptides.csv")
-            target_networks = pickle.load(open("example_data/IPRG2016/MixtureAB/target_networks.p", "rb"))
-            min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+            target_protein_table = pd.read_csv(
+                "example_data/IPRG2016/MixtureAB/reprisal.target.proteins.csv"
+            ).drop(["ProteinGroupId", "FDR"], axis=1)
+            target_peptide_table = pd.read_csv(
+                "example_data/IPRG2016/MixtureAB/reprisal.target.peptides.csv"
+            )
+            decoy_protein_table = pd.read_csv(
+                "example_data/IPRG2016/MixtureAB/reprisal.decoy.proteins.csv"
+            )
+            decoy_peptide_table = pd.read_csv(
+                "example_data/IPRG2016/MixtureAB/reprisal.decoy.peptides.csv"
+            )
+            target_networks = pickle.load(
+                open("example_data/IPRG2016/MixtureAB/target_networks.p", "rb")
+            )
+            min_tda_score = target_protein_table[
+                target_protein_table["q-value"] < 0.01
+            ].score.min()
             args.pi_folder = "example_data/IPRG2016/MixtureAB"
-            target_protein_table, target_peptide_table, \
-            decoy_protein_table, decoy_peptide_table, \
-                target_networks = load_protein_inference_data(args.pi_folder)
-            min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
-            navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
+            (
+                target_protein_table,
+                target_peptide_table,
+                decoy_protein_table,
+                decoy_peptide_table,
+                target_networks,
+            ) = load_protein_inference_data(args.pi_folder)
+            min_tda_score = target_protein_table[
+                target_protein_table["q-value"] < 0.01
+            ].score.min()
+            navigation = st.radio(
+                "Page Selection",
+                ["Experiment Summary", "Network Visualization"],
+                index=1,
+            )
 
 if navigation == "Experiment Summary":
-    if (1): # PLACEHOLDER FOR HAVING FINISHED PROCESSING
-     
-        st.header("Output Tables:")
 
-        searchbox = st.text_input("Search for proteins here. Use ProteinId strings to search. No fancy syntax like regex or anything. Exact or contains matches only.", "")
+    st.header("Experiment Summary")
 
-        st.subheader("Protein Table")
-        if searchbox:
-            st.write((target_protein_table[
-                target_protein_table.ProteinId.str.contains(searchbox) | 
-                target_protein_table.indistinguishable.str.contains(searchbox) |
-                target_protein_table.subset.str.contains(searchbox)
-            
-            ].sort_values("score", ascending = False)))
-        else:
-            st.write(target_protein_table.sort_values("score", ascending = False))
+    col1, col2 = st.columns(2)
 
-        st.subheader("Peptide Table")
-        st.write(target_peptide_table)
+    with col1:
+        st.subheader("Number of Proteins per Inference Category")
+        st.write(
+            "The following bar-chart describes the number of proteins in each inference category"
+        )
+
+        major_proteins = set(target_protein_table.ProteinId)
+        inferred_major_proteins = set(
+            target_protein_table[target_protein_table["q-value"] < 0.01].ProteinId
+        )
+        subset_proteins = (
+            set(target_protein_table.subset.explode(" ").str.replace("'|\[|\]", ""))
+            - {""}
+            - major_proteins
+        )
+        indistinguishable_proteins = set(
+            target_protein_table.indistinguishable.explode(" ").str.replace(
+                "'|\[|\]", ""
+            )
+        ) - {""}
+
+        tmp = pd.DataFrame.from_dict(
+            {
+                "Inference Category": [
+                    "Major Proteins",
+                    "Inferred Major Proteins",
+                    "Subset Proteins",
+                    "Indistinguishable Proteins",
+                ],
+                "Number of Proteins": [
+                    len(major_proteins),
+                    len(inferred_major_proteins),
+                    len(subset_proteins),
+                    len(indistinguishable_proteins),
+                ],
+            }
+        )
+        tmp
+        fig = px.bar(
+            tmp,
+            x="Inference Category",
+            y="Number of Proteins",
+            color=["blue", "green", "red", "orange"],
+            text_auto=True,
+        )
+        fig.update_layout({"showlegend": False})
+        st.plotly_chart(fig)
+
+    with col2:
+        st.subheader("Distribution of Proteins per Problem Network")
+        st.write(
+            "The following scatter plot, shows the number of proteins in a problem network vs the score of each major protein."
+        )
+
+        highest_scoring_protein_in_network = [
+            max(
+                i.get_node_attribute_dict("score"),
+                key=i.get_node_attribute_dict("score").get,
+            )
+            for i in target_networks
+        ]
+        num_proteins_in_target_networks = [
+            len(i.get_proteins()) for i in target_networks
+        ]
+        num_peptides_in_target_networks = [
+            len(i.get_peptides()) for i in target_networks
+        ]
+        tmp = pd.DataFrame(
+            {
+                "Highest Scoring Protein in Network": highest_scoring_protein_in_network,
+                "Proteins in Network": num_proteins_in_target_networks,
+                "Peptides in Network": num_peptides_in_target_networks,
+            }
+        )
+
+        fig = px.scatter(
+            tmp,
+            "Proteins in Network",
+            "Peptides in Network",
+            hover_data = ["Highest Scoring Protein in Network"],
+            marginal_x="violin",
+            marginal_y="violin",
+        )
+        fig.update_layout({"showlegend": False})
+        st.plotly_chart(fig)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Decoy - Target Distribution of Log Scores")
+        """
+        The following overlayed histograms demonstrate the seperation of scores corresponding to known decoys and target proteins. 
+        
+        Many protein inference strategies, including REPRISAL, with calculate the FDR of a protein score as the 
+        ratio of decoys which attain an equal to or greater score to targets which attain an equal or greater score. 
+
+        """
+        if "target_protein_table" in locals():
+
+            decoy_scores = decoy_protein_table.score.apply(np.log).to_list()
+            target_scores = target_protein_table.score.apply(np.log).to_list()
+            all_scores = target_scores + decoy_scores
+            label = ["target"] * len(target_scores) + ["decoy"] * len(decoy_scores)
+            tmp = pd.DataFrame({"score": all_scores, "label": label})
+
+            fig = px.histogram(
+                tmp,
+                x="score",
+                color="label",
+                nbins=50,
+                barmode="overlay",
+                labels={"score": "log(score)", "label": "TDA Group"},
+                template="plotly_dark",
+            )
+
+            min_tda_score = target_protein_table[
+                target_protein_table["q-value"] < 0.01
+            ].score.min()
+            fig.add_vline(
+                x=np.log(min_tda_score),
+                line_dash="dashdot",
+                annotation={
+                    "text": "TDA Inference threshold ({})".format(
+                        round(min_tda_score, 3)
+                    )
+                },
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col2:
+        st.subheader("ECDF of Log Scores by Number of Peptides in the Group")
+        """
+        The following ECDFs demonstrate the distribution of scores by number of peptides assigned to a protein (among major proteins.)
+
+        This is useful for getinng a sense for whether homology is a significant challenge within this dataset.
+        If proteins similtaneously have low scores and many peptides, then protein inference is "harder".
+
+        """
+
+        tmp = target_protein_table.copy()
+        tmp["total_peptides"] = tmp.total_peptides.apply(
+            lambda x: str(x) if x < 5 else "5+"
+        )
+        tmp["score"] = tmp["score"].apply(lambda x: np.log(x + 0.001))
+
+        min_tda_score = target_protein_table[
+            target_protein_table["q-value"] < 0.01
+        ].score.min()
+        # print(min_tda_score)
+
+        fig = px.ecdf(
+            tmp.sort_values("total_peptides"),
+            x="score",
+            color="total_peptides",
+            template="plotly_dark",
+            labels={
+                "total_peptides": "Number of Peptides Total",
+                "score": "log(score)",
+            },
+            color_discrete_map={
+                "5+": "red",
+                "1": "blue",
+                "2": "green",
+                "3": "orange",
+                "4": "purple",
+                "5": "black",
+            },
+        )
+        fig.add_vline(
+            x=np.log(min_tda_score),
+            line_dash="dashdot",
+            annotation={
+                "text": "TDA Inference threshold ({})".format(round(min_tda_score, 3))
+            },
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+    st.header("Output Tables:")
+
+    searchbox = st.text_input(
+        "Search for proteins here. Use ProteinId strings to search. No fancy syntax like regex or anything. Exact or contains matches only.",
+        "",
+    )
+
+    st.subheader("Protein Table")
+    if searchbox:
+        st.write(
+            (
+                target_protein_table[
+                    target_protein_table.ProteinId.str.contains(searchbox)
+                    | target_protein_table.indistinguishable.str.contains(searchbox)
+                    | target_protein_table.subset.str.contains(searchbox)
+                ].sort_values("score", ascending=False)
+            )
+        )
+    else:
+        st.write(target_protein_table.sort_values("score", ascending=False))
+
+    st.subheader("Peptide Table")
+    st.write(target_peptide_table)
 
 if navigation == "Network Visualization":
     st.header("Network Visualizer:")
     st.subheader("")
-    #Visualize networks:
-    if "target_protein_table" in locals():
-        '''
-        Protein Inference algorithms can be interpreted using network diagrams. 
+    # Visualize networks:
+
+    """
+    Protein Inference algorithms can be interpreted using network diagrams. 
+
+    Please note the following:
+    """
+
+    st.markdown(
+        """
     
-        Please note the following:
+        * Large nodes are proteins. Small nodes are peptides (or PSMs).
+        * Edges are drawn when a protein contains a peptide.
+        * Hover over a a node or edge to see it's score. 
+        * You can drag proteins to attempt to see the network better
+    """
+    )
 
-            * Large nodes are proteins. Small nodes are peptides (or PSMs).
-            * Edges are drawn when a protein contains a peptides (may have emitted it).
-            * Coloring options include by annotation, 
-        
-        In the default visualization mode, proteins and peptides are coloured by status (annotation), group, or score.
+    """
+    In the default visualization mode, proteins and peptides are coloured by status (annotation), group, or score.
 
-        For more info please see the current github repository or reach out to the authors. 
-    
-        '''
-        molecule = st.selectbox("Which molecule do you want to visualize? [please choose a major protein]", list(target_protein_table.ProteinId.unique()))
-        pn = TableMaker().find_molecule(target_networks, molecule) 
+    For more info please see the current github repository or reach out to the authors. 
 
-        group_option = st.selectbox("Select a color schema for the force-directed problem network visualization. Selecting 'all' will create all options below.", ["all", "status", "group", "score"])
+    """
+    with st.expander(
+        "Expand this section to get help finding your protein of interest"
+    ):
+        st.subheader("Help me find my Protein")
 
-        if group_option != "all":
-            NetworkGrapher().draw(pn, group_option, size = [800,800])
-            st.components.v1.html(open("nx.html", "r").read(), width=800, height=800)
-        
-        else:
-            width = 400
-            height = 400
-            col1, col2, col3 = st.columns(3)
-            NetworkGrapher().draw(pn, "status", name = "nx", size = [width,height])
-            NetworkGrapher().draw(pn, "group", name = "nx1", size = [width,height])
-            NetworkGrapher().draw(pn, "score", name = "nx2", size = [width,height])
-            with col1:
-                st.components.v1.html(open("nx.html", "r").read(), width=width, height=height)
-                st.download_button('Download', open("nx.html", "r").read(), file_name = "problem_network.html")
-            with col2:
-                st.components.v1.html(open("nx1.html", "r").read(), width=width, height=height)
-                st.download_button('Download', open("nx1.html", "r").read(), file_name = "problem_network.html")
-            with col3:
-                st.components.v1.html(open("nx2.html", "r").read(), width=width, height=height)
-                st.download_button('Download', open("nx2.html", "r").read(), file_name = "problem_network.html")
-        
-        protein_table_option = st.checkbox("Show Protein Table", key = 1)
-        peptide_table_option = st.checkbox("Show Peptide Table", key = 2)
+        searchbox = st.text_input(
+            "Search for proteins here. Use ProteinId strings to search. No fancy syntax like regex or anything. Exact or contains matches only.",
+            target_protein_table.ProteinId.iloc[0],
+        )
+
+        st.write("Protein networks which contain a protein which matches your search:")
+        if searchbox:
+            st.write(
+                (
+                    target_protein_table[
+                        target_protein_table.ProteinId.str.contains(searchbox)
+                        | target_protein_table.indistinguishable.str.contains(searchbox)
+                        | target_protein_table.subset.str.contains(searchbox)
+                    ].sort_values("score", ascending=False)
+                )
+            )
+
+    molecule = st.selectbox(
+        "Which molecule do you want to visualize? [please choose a major protein, you can type in this field to search.]",
+        list(target_protein_table.ProteinId.unique()),
+    )
+    pn = TableMaker().find_molecule(target_networks, molecule)
+
+    group_option = st.selectbox(
+        "Select a color schema for the force-directed problem network visualization. Selecting 'all' will create all options below.",
+        ["all", "status", "group", "score"],
+    )
+
+    if group_option != "all":
+        NetworkGrapher().draw(pn, group_option, size=[800, 800])
+        st.components.v1.html(open("nx.html", "r").read(), width=800, height=800)
+
+    else:
+        width = 400
+        height = 400
+        col1, col2, col3 = st.columns(3)
+        NetworkGrapher().draw(pn, "status", name="nx", size=[width, height])
+        NetworkGrapher().draw(pn, "group", name="nx1", size=[width, height])
+        NetworkGrapher().draw(pn, "score", name="nx2", size=[width, height])
+        with col1:
+            st.components.v1.html(
+                open("nx.html", "r").read(), width=width, height=height
+            )
+            st.download_button(
+                "Download",
+                open("nx.html", "r").read(),
+                file_name="problem_network.html",
+            )
+        with col2:
+            st.components.v1.html(
+                open("nx1.html", "r").read(), width=width, height=height
+            )
+            st.download_button(
+                "Download",
+                open("nx1.html", "r").read(),
+                file_name="problem_network.html",
+            )
+        with col3:
+            st.components.v1.html(
+                open("nx2.html", "r").read(), width=width, height=height
+            )
+            st.download_button(
+                "Download",
+                open("nx2.html", "r").read(),
+                file_name="problem_network.html",
+            )
+
+        protein_table_option = st.checkbox("Show Protein Table", key=1)
+        peptide_table_option = st.checkbox("Show Peptide Table", key=2)
 
         if protein_table_option:
             st.subheader("Protein Table")
@@ -228,60 +546,4 @@ if navigation == "Network Visualization":
         if peptide_table_option:
             st.subheader("Peptide Table")
             st.write(TableMaker().get_peptide_table(pn))
-    else: 
-        st.info("I'm thinking about my weekend plans while waiting...")
 
-if navigation == "Quality Control":
-    st.subheader("QC Figures")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.subheader("Decoy - Target Distribution of Log Scores")
-        '''
-        The following overlayed histograms demonstrate the seperation of scores corresponding to known decoys and target proteins. 
-        
-        Many protein inference strategies, including REPRISAL, with calculate the FDR of a protein score as the 
-        ratio of decoys which attain an equal to or greater score to targets which attain an equal or greater score. 
-
-        '''
-        if "target_protein_table" in locals():
-            
-            decoy_scores = decoy_protein_table.score.apply(np.log).to_list()
-            target_scores = target_protein_table.score.apply(np.log).to_list()
-            all_scores = target_scores + decoy_scores
-            label = ["target"] * len(target_scores) + ["decoy"] * len(decoy_scores)
-            tmp = pd.DataFrame({"score": all_scores, "label": label})
-
-            fig = px.histogram(
-                tmp, x="score", color="label", 
-                nbins=50, barmode="overlay",
-                labels={"score": "log(score)", "label": "TDA Group"},
-                template = "plotly_dark"
-            )
-
-            min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
-            fig.add_vline(x=np.log(min_tda_score), line_dash="dashdot", annotation={"text": "TDA Inference threshold ({})".format(round(min_tda_score,3))})
-            st.plotly_chart(fig, use_container_width=True)
-
-    with col2:
-        st.subheader("ECDF of Log Scores by Number of Peptides in the Group")
-        '''
-        The following ECDFs demonstrate the distribution of scores by number of peptides assigned to a protein (among major proteins.)
-
-        This is useful for getinng a sense for whether homology is a significant challenge within this dataset.
-        If proteins similtaneously have low scores and many peptides, then protein inference is "harder".
-
-        '''
-
-        tmp = target_protein_table.copy()
-        tmp["total_peptides"] = tmp.total_peptides.apply(lambda x: str(x) if x < 5 else "5+")
-        tmp["score"] = tmp["score"].apply(lambda x: np.log(x+0.001))
-
-        min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
-        #print(min_tda_score)
-
-        fig = px.ecdf(tmp.sort_values("total_peptides"), x="score", color = "total_peptides", template = "plotly_dark", 
-            labels={"total_peptides": "Number of Peptides Total", "score":"log(score)"}, color_discrete_map={"5+": "red", "1": "blue", "2": "green", "3": "orange", "4": "purple", "5": "black"})
-        fig.add_vline(x=np.log(min_tda_score), line_dash="dashdot", annotation={"text": "TDA Inference threshold ({})".format(round(min_tda_score,3))})
-        st.plotly_chart(fig, use_container_width=True)
