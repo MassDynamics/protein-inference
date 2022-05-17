@@ -85,10 +85,7 @@ pip install streamlit
 cd streamlit
 streamlit run pi_playground.py -- --folder /path/to/your/pi/output/
 ```
-
-You should see this at the top of the page.
-
-![](./readme_image.png)
+You can also start the app without a path to an upload folder, and upload your output files after the fact.
 
 ## Using Docker:
 
