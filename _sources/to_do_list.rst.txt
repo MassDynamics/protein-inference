@@ -3,11 +3,6 @@
 To Do List
 ============
 
-Write tutorial
--------------- 
-* Finish writing docstrings etc.
-* Move different class groups into their own pages?
-* Write a tutorial on using crux to get psms. 
-* remove get_files from repo
-* delete or update CHANGELOG.txt
-* remove development notebooks
+I will write a comprehensive to do list next time this project is in active development. 
+
+Please feel free to add any other items to the list, if you would like to collaborate or make suggestions for this project.
