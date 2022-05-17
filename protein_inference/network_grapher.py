@@ -91,9 +91,16 @@ class NetworkGrapher():
         #colour_dict = get_colour_dict(groups)
         sample_colors = ["windows blue", "amber", "greyish", 
                          "faded green",  "dusty purple", "pale red", 
+                         "medium green", "denim blue"] + \
+                        ["windows blue", "amber", "greyish", 
+                         "faded green",  "dusty purple", "pale red", 
+                         "medium green", "denim blue"] + \
+                        ["windows blue", "amber", "greyish", 
+                         "faded green",  "dusty purple", "pale red", 
                          "medium green", "denim blue"]
         colormap = list(sns.xkcd_palette(sample_colors).as_hex())
         colormap = colormap[:len(groups)]
+        assert (len(groups)) <= len(sample_colors), print("Not enough colours for all groups")
         colour_dict = dict(zip(groups, colormap))
         for group in groups:
             pn.update_nodes(pn.pick_nodes("allocated", group),
