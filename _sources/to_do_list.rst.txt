@@ -1,0 +1,9 @@
+
+============
+To Do List
+============
+
+Feel free to make suggestions here!
+
+* Create version of streamlit app to enable benchmarking (takes in spike protein lists)
+* Accept more input file types (mz.ident.xml)
