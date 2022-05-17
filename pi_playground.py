@@ -74,55 +74,81 @@ def load_protein_inference_data(path):
 #    st.info("No protein inference output folder has been defined.")
 #    st.info("You can define it by calling: streamlit run pi_playground.py -- --folder /path/to/your/pi/output/")
 
-if args.pi_folder is not None:
+data_is_available = False
+if args.pi_folder:
+    data_is_available = True
+
+if data_is_available: # this will get triggered if the app is run with data, data is uploaded or sample data is clicked.
     target_protein_table, target_peptide_table, \
             decoy_protein_table, decoy_peptide_table, \
             target_networks = load_protein_inference_data(args.pi_folder)
     min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
     navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
 else: 
-    navigation = "experiment_upload"
+    navigation = "landing"
 
+if navigation == "landing":
+    st.title("Welcome to the PI Playground!")
+    st.subheader("Please select one of the following data options:")
+    data_selection = st.radio("Data Selection", ["Upload Data", "Sample Data"])
 
+    if data_selection == "Upload Data":
+            
+        all_files_uploaded = False
+        needed_files = {"reprisal.target.proteins.csv", "reprisal.target.peptides.csv", "reprisal.decoy.proteins.csv", "reprisal.decoy.peptides.csv", "target_networks.p"}
 
-if navigation == "experiment_upload":
-    all_files_uploaded = False
-    needed_files = {"reprisal.target.proteins.csv", "reprisal.target.peptides.csv", "reprisal.decoy.proteins.csv", "reprisal.decoy.peptides.csv", "target_networks.p"}
-
-    st.write("Please upload all the files.")
-    uploaded_files = st.file_uploader("Please upload the protein and peptide, target and decoy tables here:", accept_multiple_files=True, key = 102)
-    for uploaded_file in uploaded_files:     
+        st.write("Please upload all the files.")
+        uploaded_files = st.file_uploader("Please upload the protein and peptide, target and decoy tables here:", accept_multiple_files=True, key = 102)
+        for uploaded_file in uploaded_files:     
+            
+            if uploaded_file.name == "reprisal.target.proteins.csv":
+                uploaded_table = pd.read_csv(uploaded_file)
+                target_protein_table = uploaded_table.drop(["ProteinGroupId", "FDR"], axis = 1)
+                needed_files = needed_files - {"reprisal.target.proteins.csv"}
+            elif uploaded_file.name == "reprisal.target.peptides.csv":
+                uploaded_table = pd.read_csv(uploaded_file)
+                target_peptide_table = uploaded_table
+                needed_files = needed_files - {"reprisal.target.peptides.csv"}
+            elif uploaded_file.name == "reprisal.decoy.proteins.csv":
+                uploaded_table = pd.read_csv(uploaded_file)
+                decoy_protein_table = uploaded_table
+                needed_files = needed_files - {"reprisal.decoy.proteins.csv"}
+            elif uploaded_file.name =="reprisal.decoy.peptides.csv":
+                uploaded_table = pd.read_csv(uploaded_file)
+                decoy_peptide_table = uploaded_table
+                needed_files = needed_files - {"reprisal.decoy.peptides.csv"}
+            elif uploaded_file.name == "target_networks.p":
+                with open("target_networks.p", "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                target_networks = pickle.load(open("target_networks.p", "rb"))
+                needed_files = needed_files - {"target_networks.p"}
         
-        if uploaded_file.name == "reprisal.target.proteins.csv":
-            uploaded_table = pd.read_csv(uploaded_file)
-            target_protein_table = uploaded_table.drop(["ProteinGroupId", "FDR"], axis = 1)
-            needed_files = needed_files - {"reprisal.target.proteins.csv"}
-        elif uploaded_file.name == "reprisal.target.peptides.csv":
-            uploaded_table = pd.read_csv(uploaded_file)
-            target_peptide_table = uploaded_table
-            needed_files = needed_files - {"reprisal.target.peptides.csv"}
-        elif uploaded_file.name == "reprisal.decoy.proteins.csv":
-            uploaded_table = pd.read_csv(uploaded_file)
-            decoy_protein_table = uploaded_table
-            needed_files = needed_files - {"reprisal.decoy.proteins.csv"}
-        elif uploaded_file.name =="reprisal.decoy.peptides.csv":
-            uploaded_table = pd.read_csv(uploaded_file)
-            decoy_peptide_table = uploaded_table
-            needed_files = needed_files - {"reprisal.decoy.peptides.csv"}
-        elif uploaded_file.name == "target_networks.p":
-            with open("target_networks.p", "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            target_networks = pickle.load(open("target_networks.p", "rb"))
-            needed_files = needed_files - {"target_networks.p"}
+        if len(needed_files) == 0:
+            all_files_uploaded = True
+            st.write("All files uploaded!")
+            data_is_available = True
+
+            min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+
+            st.write("You can now navigate to the other pages.")
+            navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 0)
     
-    if len(needed_files) == 0:
-        all_files_uploaded = True
-        st.write("All files uploaded!")
+    elif data_selection == "Sample Data":
+        st.markdown("This data comes from the iPRG2016 benchmark, designed to test protein inference algorithm performance (https://dx.doi.org/10.7171%2Fjbt.18-2902-003).",unsafe_allow_html=True)
 
-        min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
-
-        st.write("You can now navigate to the other pages.")
-        navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
+        if st.checkbox("Proceed with sample data."):
+            target_protein_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.target.proteins.csv").drop(["ProteinGroupId", "FDR"], axis = 1)
+            target_peptide_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.target.peptides.csv")
+            decoy_protein_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.decoy.proteins.csv")
+            decoy_peptide_table = pd.read_csv("example_data/IPRG2016/MixtureAB/reprisal.decoy.peptides.csv")
+            target_networks = pickle.load(open("example_data/IPRG2016/MixtureAB/target_networks.p", "rb"))
+            min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+            args.pi_folder = "example_data/IPRG2016/MixtureAB"
+            target_protein_table, target_peptide_table, \
+            decoy_protein_table, decoy_peptide_table, \
+                target_networks = load_protein_inference_data(args.pi_folder)
+            min_tda_score = target_protein_table[target_protein_table["q-value"] < 0.01].score.min()
+            navigation = st.radio('Page Selection', ["Experiment Summary", "Quality Control", "Network Visualization"], index = 1)
 
 if navigation == "Experiment Summary":
     if (1): # PLACEHOLDER FOR HAVING FINISHED PROCESSING
@@ -140,7 +166,7 @@ if navigation == "Experiment Summary":
             
             ].sort_values("score", ascending = False)))
         else:
-            st.write(target_protein_table.sort_values("score", ascending = False).head(5))
+            st.write(target_protein_table.sort_values("score", ascending = False))
 
         st.subheader("Peptide Table")
         st.write(target_peptide_table)
