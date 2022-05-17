@@ -19,7 +19,7 @@ The protein inference package is available on the python index via pip
 Install from github
 -------------------
 
-Currently the code can be installed from source (inside protein-inference-joseph cloned repo)
+Currently the code can be installed from source (inside protein-inference repo)
 
 .. code-block:: bash
 
