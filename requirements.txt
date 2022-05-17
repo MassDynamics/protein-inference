@@ -8,3 +8,4 @@ upsetplot==0.4.1
 plotly_express==0.4.1
 plotly==5.7.0
 coverage==6.1.2
+streamlit-plotly-events==0.0.6

@@ -1,5 +1,6 @@
 from turtle import hideturtle
 import streamlit as st
+from streamlit_plotly_events import plotly_events
 
 import numpy as np
 import pandas as pd
@@ -462,32 +463,80 @@ if navigation == "Network Visualization":
     For more info please see the current github repository or reach out to the authors. 
 
     """
-    with st.expander(
-        "Expand this section to get help finding your protein of interest"
-    ):
-        st.subheader("Help me find my Protein")
 
-        searchbox = st.text_input(
-            "Search for proteins here. Use ProteinId strings to search. No fancy syntax like regex or anything. Exact or contains matches only.",
-            target_protein_table.ProteinId.iloc[0],
-        )
+    select_by = st.radio("Choose a method for selecting problem networks", ["Find by Protein", "Select by Properties"])
+    
+    if select_by == "Find by Protein":
+        with st.expander(
+            "Expand this section to get help finding your protein of interest"
+        ):
+            st.subheader("Help me find my Protein")
 
-        st.write("Protein networks which contain a protein which matches your search:")
-        if searchbox:
-            st.write(
-                (
-                    target_protein_table[
-                        target_protein_table.ProteinId.str.contains(searchbox)
-                        | target_protein_table.indistinguishable.str.contains(searchbox)
-                        | target_protein_table.subset.str.contains(searchbox)
-                    ].sort_values("score", ascending=False)
-                )
+            searchbox = st.text_input(
+                "Search for proteins here. Use ProteinId strings to search. No fancy syntax like regex or anything. Exact or contains matches only.",
+                target_protein_table.ProteinId.iloc[0],
             )
 
-    molecule = st.selectbox(
-        "Which molecule do you want to visualize? [please choose a major protein, you can type in this field to search.]",
-        list(target_protein_table.ProteinId.unique()),
-    )
+            st.write("Protein networks which contain a protein which matches your search:")
+            if searchbox:
+                st.write(
+                    (
+                        target_protein_table[
+                            target_protein_table.ProteinId.str.contains(searchbox)
+                            | target_protein_table.indistinguishable.str.contains(searchbox)
+                            | target_protein_table.subset.str.contains(searchbox)
+                        ].sort_values("score", ascending=False)
+                    )
+                )
+
+        molecule = st.selectbox(
+            "Which molecule do you want to visualize? [please choose a major protein, you can type in this field to search.]",
+            list(target_protein_table.ProteinId.unique()),
+        )
+    
+    elif select_by == "Select by Properties":
+
+            highest_scoring_protein_in_network = [
+                max(
+                    i.get_node_attribute_dict("score"),
+                    key=i.get_node_attribute_dict("score").get,
+                )
+                for i in target_networks
+            ]
+            num_proteins_in_target_networks = [
+                len(i.get_proteins()) for i in target_networks
+            ]
+            num_peptides_in_target_networks = [
+                len(i.get_peptides()) for i in target_networks
+            ]
+            tmp = pd.DataFrame(
+                {
+                    "Highest Scoring Protein in Network": highest_scoring_protein_in_network,
+                    "Proteins in Network": num_proteins_in_target_networks,
+                    "Peptides in Network": num_peptides_in_target_networks,
+                }
+            )
+
+            fig = px.scatter(
+                tmp,
+                "Proteins in Network",
+                "Peptides in Network",
+                hover_data = ["Highest Scoring Protein in Network"],
+                marginal_x="violin",
+                marginal_y="violin",
+                template = "plotly_dark",
+            )
+            fig.update_layout({"showlegend": False})
+            selected_points = plotly_events(fig, click_event=True, select_event = False, hover_event=False)
+            if selected_points:
+                problem_network = tmp["Highest Scoring Protein in Network"].iloc[selected_points[0]["pointNumber"]]
+                st.write("You selected the problem network with the following highest scoring protein: {}".format(problem_network))
+                molecule = problem_network
+            else:
+                molecule = target_protein_table.ProteinId.iloc[0]
+
+
+
     pn = TableMaker().find_molecule(target_networks, molecule)
 
     group_option = st.selectbox(
