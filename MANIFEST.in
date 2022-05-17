@@ -1,4 +1,0 @@
-global-include *.txt *.py
-recursive-include *.txt *.py
-prune .history
-prune example_data/
