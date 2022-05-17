@@ -1,0 +1,104 @@
+INFO: CPU: 3b670b44a6cd
+INFO: Crux version: 4.1-2111ffde-2021-10-27
+INFO: Wed Feb  2 22:41:01 UTC 2022
+COMMAND LINE: crux percolator --overwrite T --subset-max-train 1000000 --klammer F --maxiter 10 --output-dir /data/protein-inference-experiment-picked-protein --picked-protein /data/upload/all_prests.fasta --protein-enzyme trypsin --search-input concatenated --verbosity 30 /data/main-search/15f08718-9d68-4eca-8833-d4e50b7db2c6.comet.target.pin /data/main-search/c53fff70-848a-474d-9bb1-468649462d1d.comet.target.pin /data/main-search/e268c9fb-f559-4f1b-b2bb-aeb9bb413542.comet.target.pin
+INFO: Beginning percolator.
+INFO: Percolator version 3.05.nightly-137-e806a0c5, Build Date Oct 30 2021 07:40:51
+INFO: Copyright (c) 2006-9 University of Washington. All rights reserved.
+INFO: Written by Lukas Käll (lukall@u.washington.edu) in the
+INFO: Department of Genome Sciences at the University of Washington.
+INFO: Issued command:
+INFO: percolator --results-peptides /data/protein-inference-experiment-picked-protein/percolator.target.peptides.txt --decoy-results-peptides /data/protein-inference-experiment-picked-protein/percolator.decoy.peptides.txt --results-psms /data/protein-inference-experiment-picked-protein/percolator.target.psms.txt --decoy-results-psms /data/protein-inference-experiment-picked-protein/percolator.decoy.psms.txt --verbose 2 --protein-decoy-pattern decoy_ --seed 1 --subset-max-train 1000000 --trainFDR 0.01 --testFDR 0.01 --maxiter 10 --search-input concatenated --no-schema-validation --picked-protein /data/upload/all_prests.fasta --protein-enzyme trypsin --results-proteins /data/protein-inference-experiment-picked-protein/percolator.target.proteins.txt --decoy-results-proteins /data/protein-inference-experiment-picked-protein/percolator.decoy.proteins.txt --post-processing-tdc /data/protein-inference-experiment-picked-protein/make-pin.pin
+INFO: Started Wed Feb  2 22:41:01 2022
+INFO:  on 3b670b44a6cd
+INFO: Hyperparameters: selectionFdr=0.01, Cpos=0, Cneg=0, maxNiter=10
+INFO: Reading tab-delimited input from datafile /data/protein-inference-experiment-picked-protein/make-pin.pin
+INFO: Features:
+INFO: lnrSp deltLCn deltCn lnExpect Xcorr Sp IonFrac Mass PepLen Charge1 Charge2 Charge3 Charge4 Charge5 Charge6 Charge7 enzN enzC enzInt lnNumSP dM absdM 
+INFO: Found 252287 PSMs
+INFO: Warning: separate searches input detected, but overridden by -I flag specifying a concatenated search.
+INFO: Train/test set contains 126255 positives and 126032 negatives, size ratio=1.00177 and pi0=1
+INFO: Selecting Cpos by cross-validation.
+INFO: Selecting Cneg by cross-validation.
+INFO: Split 1:	Selected feature 4 as initial direction. Could separate 5063 training set positives with q<0.01 in that direction.
+INFO: Split 2:	Selected feature 4 as initial direction. Could separate 5085 training set positives with q<0.01 in that direction.
+INFO: Split 3:	Selected feature 4 as initial direction. Could separate 5006 training set positives with q<0.01 in that direction.
+INFO: Found 7565 test set positives with q<0.01 in initial direction
+INFO: Reading in data and feature calculation took 5.7563 cpu seconds or 3 seconds wall clock time.
+INFO: ---Training with Cpos selected by cross validation, Cneg selected by cross validation, initial_fdr=0.01, fdr=0.01
+INFO: Iteration 1:	Estimated 8865 PSMs with q<0.01
+INFO: Iteration 2:	Estimated 8961 PSMs with q<0.01
+INFO: Iteration 3:	Estimated 8992 PSMs with q<0.01
+INFO: Iteration 4:	Estimated 9000 PSMs with q<0.01
+INFO: Iteration 5:	Estimated 8997 PSMs with q<0.01
+INFO: Iteration 6:	Estimated 9000 PSMs with q<0.01
+INFO: Iteration 7:	Estimated 9003 PSMs with q<0.01
+INFO: Iteration 8:	Estimated 9014 PSMs with q<0.01
+INFO: Iteration 9:	Estimated 9014 PSMs with q<0.01
+INFO: Iteration 10:	Estimated 9012 PSMs with q<0.01
+INFO: Learned normalized SVM weights for the 3 cross-validation splits:
+INFO:  Split1	 Split2	 Split3	FeatureName
+INFO: -7.4242	-5.7699	-6.7577	lnrSp
+INFO:  0.1348	 0.6944	 0.5876	deltLCn
+INFO:  0.7001	 0.7652	 0.4555	deltCn
+INFO: -2.4207	-1.4270	-1.9751	lnExpect
+INFO: -0.1897	 0.6739	 0.2068	Xcorr
+INFO: -0.0725	-0.0574	-0.5957	Sp
+INFO:  0.5339	 0.4969	 0.8955	IonFrac
+INFO:  1.1194	 0.7177	 0.4317	Mass
+INFO: -1.0441	-0.5365	-0.3892	PepLen
+INFO: -0.9158	-0.8517	-1.2001	Charge1
+INFO: -0.4779	-0.5117	-0.7212	Charge2
+INFO:  0.4933	 0.5001	 0.6986	Charge3
+INFO:  0.4902	 0.4099	 0.6453	Charge4
+INFO:  0.2081	 0.2878	 0.3063	Charge5
+INFO:  0.0827	 0.1482	 0.2032	Charge6
+INFO:  0.0536	 0.0312	 0.0860	Charge7
+INFO:  0.3993	 0.3442	 0.3877	enzN
+INFO:  0.0000	 0.0000	 0.0000	enzC
+INFO: -0.4054	-0.4910	-0.3687	enzInt
+INFO:  0.0518	 0.1978	 0.1250	lnNumSP
+INFO:  1.5238	 1.7887	 0.6241	dM
+INFO: -1.6331	-2.0461	-0.8833	absdM
+INFO: -12.8438	-11.7936	-12.8396	m0
+INFO: Found 8921 test set PSMs with q<0.01.
+INFO: Scoring full list of PSMs with trained SVMs.
+INFO: Features:
+INFO: lnrSp deltLCn deltCn lnExpect Xcorr Sp IonFrac Mass PepLen Charge1 Charge2 Charge3 Charge4 Charge5 Charge6 Charge7 enzN enzC enzInt lnNumSP dM absdM 
+INFO: Found 252287 PSMs
+INFO: Evaluated set contained 126255 positives and 126032 negatives.
+INFO: Multiple instantiations of Normalizer
+INFO: Assigning index 0 to /var/app/current/c53fff70-848a-474d-9bb1-468649462d1d.comet.
+INFO: Assigning index 1 to /var/app/current/e268c9fb-f559-4f1b-b2bb-aeb9bb413542.comet.
+INFO: Assigning index 2 to /var/app/current/15f08718-9d68-4eca-8833-d4e50b7db2c6.comet.
+INFO: Multiple instantiations of Normalizer
+INFO: Multiple instantiations of Normalizer
+INFO: Tossing out "redundant" PSMs keeping only the best scoring PSM for each unique peptide.
+INFO: Calculating q values.
+INFO: Final list yields 2076 target peptides with q<0.01.
+INFO: Calculating posterior error probabilities (PEPs).
+INFO: Processing took 72.4692 cpu seconds or 30 seconds wall clock time.
+INFO: Multiple instantiations of Normalizer
+INFO: Multiple instantiations of Normalizer
+INFO: 
+INFO: Calculating protein level probabilities.
+INFO: Miscleavage detected: K.CSDNYEAQAEKNQGQSEGNQHQSEGNPDKSEESQGQPEENHHSER.S
+INFO: Miscleavage detected: -.PPEYPLDPRTTIRQTAEPYVSTNPFIFAAGGTNRAHR.R
+INFO: Non enzymatic flank detected: K.PVMSAAISSPPSFVPQSALPGVNVSNFAFPFTS.-
+INFO: Miscleavage detected: -.VPSGGVRGNHPRVVEPNDEEPPPPRLEAGTQRR.H
+INFO: Miscleavage detected: -.ALPPREKAEAKALGPRTGQPRQGLDPR.N
+INFO: Detected TrypsinP as protease instead of Trypsin, allowing (R|K).P cleavages.
+INFO: Protein digestion parameters for duplicate/fragment detection (detected from PSM input):
+INFO:  enzyme=trypsinp, digestion=full, min-pept-length=5, max-pept-length=55, max-miscleavages=5
+INFO: Detecting protein fragments/duplicates in target database
+INFO: Detecting protein fragments/duplicates in decoy database
+INFO: Initialized protein inference engine.
+INFO: Computing protein probabilities.
+INFO: Performing picked protein strategy
+INFO: Eliminated lower-scoring target-decoy protein: 874 target proteins and 481 decoy proteins remaining.
+INFO: Computing protein statistics.
+INFO: Number of protein groups identified at q-value = 0.01: 359
+INFO: Estimating protein probabilities took : 0.5582 cpu seconds or 0 seconds wall clock time.
+INFO: Elapsed time: 34.7 s
+INFO: Finished crux percolator.
+INFO: Return Code:0
