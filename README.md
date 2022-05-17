@@ -37,11 +37,17 @@ conda create -y --name protein-inference python=3.8 --file requirements.txt
 Many of these are just used in the benchmarking suite for visualization. 
 
 [pandas](https://github.com/pandas-dev/pandas)
+
 [networkx](https://networkx.org/)
+
 [pyvis](https://pyvis.readthedocs.io/en/latest/index.html)
+
 [matplotlib](https://matplotlib.org/)
+
 [plotly](https://plotly.com/python/)
+
 [seaborn](https://seaborn.pydata.org/)
+
 [upsetplot](https://pypi.org/project/UpSetPlot/)
 
 ## Quick Start
@@ -77,7 +83,7 @@ If you'd like to play around with some processed data/visualization, install str
 ```bash
 pip install streamlit
 cd streamlit
-streamlit run pi_playground
+streamlit run pi_playground.py -- --folder /path/to/your/pi/output/
 ```
 
 You should see this at the top of the page.

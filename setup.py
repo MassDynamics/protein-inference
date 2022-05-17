@@ -5,7 +5,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(name='protein_inference',
-      version='0.2.2',
+      version='0.2.3',
       description='Protein Inference Library for Network based Inference',
       long_description=
       "This codebase is being developed at Mass Dynamics https://www.massdynamics.com/ to facilitate work on the [Protein Inference Problem](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-13-S16-S4). More here: https://github.com/MassDynamics/protein-inference",
@@ -21,4 +21,4 @@ setup(name='protein_inference',
           "upsetplot>=0.4.1",
           "seaborn>=0.11.0",
           "plotly_express>=0.4.1",
-          "plotly>=4.10.0"])
+          "plotly>=5.7.0"])
