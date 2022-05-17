@@ -2,12 +2,16 @@
 Introduction
 ============
 
-The goal of this project is to build a graph based approach to performing protein inference calculations, 
-that makes inferences about which proteins likely emitted which peptides (that were observed via PSM's),
-thus creating an interpretable basis for protein quantification.
+This codebase is being developed at Mass Dynamics https://www.massdynamics.com/ to facilitate work on the [Protein Inference Problem](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-13-S16-S4). 
 
-The protein inference problem is the challenge of inferring the existence of proteins in a sample based 
-on peptide spectral matches that result from search algorithms such as percolator. 
+It has been developed using  the output of [crux comet/percolator](https://crux.ms/commands/percolator.html) (eg: percolator.target.psms.txt), but requires only that psm tables contain q-value and score columns, although more information about psms could theoretically be integrated into scoring methods. 
 
-This project makes extensive use of Networkx and pandas. It is written in the hope that further work can be built 
-using this framework.
+This codebase could be used for the following purposes:
+
+    * to develop or benchmark protein inference algorithms using shared data processing and  parallelization infrastructure
+    * to visualize the peptide-protein networks that are being reasoned about by a protein inference algorithm
+    * to opensource an algorithm that is implimented inside this package
+
+The REPRISAL algorithm, currently unpublished, was the first novel algorithm implemented inside the protein_inference framework and is contained in the distinct subpackage "reprisal". 
+
+REPRISAL stands for "REcursive PRotein Inference Scoring ALgorithm" and works by iteratively scoring proteins by their associated peptides and grouping all associated and unallocated peptides with the highest scoring protein at each iteration. FDR's are then calculated as per the score distributions for proteins in the target and decoy tables. 
