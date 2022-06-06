@@ -117,3 +117,16 @@ While not currently in development, possible additions to this codebase are:
   - Integrating Baysian methods such as Fido or EPIFANY.
   - Integrating an optimisation method, maybe using a package like PULP. 
   - Further development of benchmarking suite to allow easy comparison of existing algorithms. 
+
+## ASMS 2022 Poster
+
+![ASMS 2022 Poster](ASMS2022_Poster.png)
+
+Feel free to download the png or pdf of the ASMS 2022 poster on protein inference in python. 
+
+<a href="ASMS2022_Poster.pdf.js" download>Click to Download the poster pdf</a>
+
+NB: Table 1 was removed when trying to improve the app asthetics. I've provided it here for reference
+
+
+![Table 1](table1.png)
